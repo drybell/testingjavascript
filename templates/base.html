@@ -1,0 +1,23 @@
+<html>
+    <head>
+      <title>Test Page</title>
+      <link href="{{ url_for('static', filename='stylesheets/style.css') }}" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class='top-bar'>
+          <h1 class='header-text'> EQ TEST </h1>
+        </div>
+        <div class="rotate">
+          <ul id='eq'> 
+           <!--  <li></li> 
+            <li></li> 
+            <li></li> 
+            <li></li> 
+            <li></li> 
+            <li></li>  -->
+          </ul> 
+        </div> 
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js')}}"></script>
+</html>
