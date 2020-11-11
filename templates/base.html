@@ -2,6 +2,7 @@
     <head>
       <title>Test Page</title>
       <link href="{{ url_for('static', filename='stylesheets/style.css') }}" rel="stylesheet" type="text/css"/>
+      <script type="module" src="{{ url_for('static', filename='js/index.js')}}"></script>
     </head>
     <body>
         <div class='top-bar'>
@@ -17,7 +18,8 @@
             <li></li>  -->
           </ul> 
         </div> 
+        <div id="container" style="height: 500px; width: 500px;"></div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js')}}"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.js"></script> -->
 </html>
