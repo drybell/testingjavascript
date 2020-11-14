@@ -1,37 +1,6 @@
-// Initialize number of bins
-
-// var bins = 10; 
-// var ul   = document.getElementById('eq');
-// for (let i=0; i < bins; i++){
-// 	var bin = document.createElement("li");
-// 	ul.appendChild(bin);
-// }
-
-// function changeHeight(id, height){
-// 	column = ul.children[id];
-// 	// if (height > 200) height=200;
-// 	// if (height < 10) height=10;
-// 	column.style.height = height+"px";
-// }
-
-// function randomNumber(min, max) {
-//   number =  Math.floor((Math.random()*(max-min))+ min);
-//   return number;
-// }
 
 
-// for (let i=0; i < bins; i++){
-// 	changeHeight(i, randomNumber(10,200));
-// }
-
-// function getFFTUpdate(){ 
-// 	// make fetch or XMLHTTPRequest here 
-
-
-// 	//make call every 100ms and update eq 
-// 	setTimeout(getFFTUpdate, 100)
-// }
-
+// https://codepen.io/zalo/pen/MLBKBv?editors=0011
 
 import {
   BoxBufferGeometry,
@@ -57,7 +26,7 @@ import {
 
 import { OrbitControls } from './OrbitControls.js';
 import { DragControls } from './DragControls.js';
-// import { STLLoader } from './STLLoader.js';
+import { STLLoader } from './STLLoader.module.js';
 
 const container = document.querySelector('#container');
 const scene = new Scene();
@@ -152,6 +121,112 @@ dragControls.addEventListener('hoveron', function () {
 dragControls.addEventListener('hoveroff', function () {
 	controls.enabled = true;
 });
+const material2 = new MeshPhongMaterial( { color: 0xff5533, specular: 0x111111, shininess: 200 } );
+
+// var loader = new STLLoader();
+// loader.load( './static/stl/FANUC J1-J2.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+// 	console.log(geometry);
+// 	mesh.position.set( 10, 0, 0 );
+// 	mesh.rotation.set( -Math.PI/2, 0, 0 );
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+// var loader2 = new STLLoader();
+// loader2.load( './static/stl/FANUC J2-J3.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+
+// 	mesh.position.set( 27, 18, -11);
+// 	mesh.rotation.set( - Math.PI / 2, 0, Math.PI / 2,);
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+// var loader3 = new STLLoader();
+// loader3.load( './static/stl/FANUC J3-J4.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+
+// 	mesh.position.set( 22, 112, -11 );
+// 	mesh.rotation.set( -Math.PI / 2, 0, Math.PI / 2 );
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+// var loader4 = new STLLoader();
+// loader4.load( './static/stl/FANUC J4-J5.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+
+// 	mesh.position.set( 10, 140, -49 );
+// 	// mesh.rotation.set( - Math.PI, - Math.PI / 2, 0);
+// 	mesh.rotation.set( 0, Math.PI / 2, 0);
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+// var loader5 = new STLLoader();
+// loader5.load( './static/stl/FANUC J5-J6.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+
+// 	mesh.position.set( 10, 130, -117 );
+// 	mesh.rotation.set( 0, Math.PI / 2, 0 );
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+// var loader6 = new STLLoader();
+// loader6.load( './static/stl/FANUC J6-End.stl', function ( geometry ) {
+// 	let meshMaterial = material2;
+//     if ( geometry.hasColors ) {
+// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
+// 	}	
+// 	const mesh = new Mesh( geometry, meshMaterial );
+
+// 	mesh.position.set( 10, 137, -127.5);
+// 	mesh.rotation.set( - Math.PI / 2, 0, 0 );
+// 	mesh.scale.set( 0.15, .15, .15 );
+
+// 	mesh.castShadow = true;
+// 	mesh.receiveShadow = true;
+
+// 	scene.add( mesh );
+// });
+
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
