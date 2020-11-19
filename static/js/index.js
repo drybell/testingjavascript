@@ -21,12 +21,14 @@ import {
   GridHelper,
   MeshLambertMaterial,
   Group,
-  AxesHelper
+  AxesHelper,
+  Matrix4
 } from './three.module.js';
 
 import { OrbitControls } from './OrbitControls.js';
 import { DragControls } from './DragControls.js';
 import { STLLoader } from './STLLoader.module.js';
+import { GLTFLoader } from './GLTFLoader.js';
 
 const container = document.querySelector('#container');
 const scene = new Scene();
@@ -71,7 +73,7 @@ grid.material.transparent = true;
 scene.add(grid);
 
 var target2 = new Mesh(boxGeometry, new MeshLambertMaterial({ color: 0x3399dd }));
-target2.position.set(5, 11, 3);
+target2.position.set(20, 20, 20);
 target2.scale.set(0.02, 0.02, 0.02);
 target2.transparent = true;
 target2.opacity = 0.5;
@@ -79,6 +81,15 @@ target2.castShadow = true;
 target2.receiveShadow = true;
 scene.add(target2);
 draggableObjects.push(target2);
+
+// var target3 = new Mesh(boxGeometry, new MeshLambertMaterial({ color: 0x3399dd }));
+// target3.position.set(10, 137, -127.5);
+// target3.scale.set(0.1, 0.1, 0.1);
+// target3.transparent = true;
+// target3.opacity = 0.5;
+// target3.castShadow = true;
+// target3.receiveShadow = true;
+// scene.add(target3);
 
 scene.add(new HemisphereLight(0xffffff, 1.5));
 
@@ -123,110 +134,200 @@ dragControls.addEventListener('hoveroff', function () {
 });
 const material2 = new MeshPhongMaterial( { color: 0xff5533, specular: 0x111111, shininess: 200 } );
 
-// var loader = new STLLoader();
-// loader.load( './static/stl/FANUC J1-J2.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
-// 	console.log(geometry);
-// 	mesh.position.set( 10, 0, 0 );
-// 	mesh.rotation.set( -Math.PI/2, 0, 0 );
-// 	mesh.scale.set( 0.15, .15, .15 );
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+const fanuc2 = new GLTFLoader();
+var base_matrix; 
+var j1_matrix;
+var j2_matrix;
+var j3_matrix;
+var j4_matrix;
+var j5_matrix;
+var j6_matrix;
+var fanuc2_gltf;
+fanuc2.load(
+	// resource URL
+	'./static/gltf/FANUC.gltf',
+	// called when the resource is loaded
+	function ( gltf ) {
 
-// 	scene.add( mesh );
-// });
-// var loader2 = new STLLoader();
-// loader2.load( './static/stl/FANUC J2-J3.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
+		gltf.animations; // Array<THREE.AnimationClip>
+		gltf.scene; // THREE.Group
+		gltf.scenes; // Array<THREE.Group>
+		gltf.cameras; // Array<THREE.Camera>
+		gltf.asset; // Object
+		fanuc2_gltf = gltf.scene;
+		fanuc2_gltf.scale.set(100, 100, 100);
+		fanuc2_gltf.rotation.set(-Math.PI / 2, 0, 0);
+		// fanuc2_gltf.position.set(50,0,0);
 
-// 	mesh.position.set( 27, 18, -11);
-// 	mesh.rotation.set( - Math.PI / 2, 0, Math.PI / 2,);
-// 	mesh.scale.set( 0.15, .15, .15 );
+		// DO THIS IF YOU UPDATE THE MATRIX WORLD WITH THE ORIGINAL 
+		//fanuc2_gltf.matrixAutoUpdate = false;
+		fanuc2_gltf.visible = false;
+		//
+		console.log(fanuc2_gltf);
+		base_matrix = fanuc2_gltf.getObjectByName('occurrence_of_BaseJ1').matrix.clone(); 
+		j1_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J1J2').matrix.clone();
+		j2_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J2J3').matrix.clone();
+		j3_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J3J4').matrix.clone();
+		j4_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J4J5').matrix.clone();
+		j5_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J5J6').matrix.clone();
+		j6_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J6End').matrix.clone();
+		scene.add( fanuc2_gltf );
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+	},
+	// called while loading is progressing
+	function ( xhr ) {
 
-// 	scene.add( mesh );
-// });
-// var loader3 = new STLLoader();
-// loader3.load( './static/stl/FANUC J3-J4.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-// 	mesh.position.set( 22, 112, -11 );
-// 	mesh.rotation.set( -Math.PI / 2, 0, Math.PI / 2 );
-// 	mesh.scale.set( 0.15, .15, .15 );
+	},
+	// called when loading has errors
+	function ( error ) {
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+		console.log( 'An error happened' );
 
-// 	scene.add( mesh );
-// });
-// var loader4 = new STLLoader();
-// loader4.load( './static/stl/FANUC J4-J5.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
+	}
+);
 
-// 	mesh.position.set( 10, 140, -49 );
-// 	// mesh.rotation.set( - Math.PI, - Math.PI / 2, 0);
-// 	mesh.rotation.set( 0, Math.PI / 2, 0);
-// 	mesh.scale.set( 0.15, .15, .15 );
+// https://stackoverflow.com/questions/23385623/three-js-proper-way-to-add-and-remove-child-objects-using-three-sceneutils-atta
+function reparentObject3D(subject, newParent)
+{
+    subject.matrix.copy(subject.matrixWorld);
+    subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
+    // subject.matrixAutoUpdate = false;
+    newParent.add(subject);
+}
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+function reparentwithTarget(subject, target, newParent)
+{
+    subject.matrix.copy(target);
+    subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
+    // subject.matrixAutoUpdate = false;
+    newParent.add(subject);
+}
 
-// 	scene.add( mesh );
-// });
-// var loader5 = new STLLoader();
-// loader5.load( './static/stl/FANUC J5-J6.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
+const fanucloader = new GLTFLoader();
+var fanuc_gltf;
+var fanuc_j1;
+var fanuc_j2;
+var fanuc_j3;
+var fanuc_j4;
+var fanuc_j5;
+var fanuc_j6;
+var base;
+var fanuc_anim;
+fanucloader.load(
+	// resource URL
+	'./static/gltf/FANUC.gltf',
+	// called when the resource is loaded
+	// FWIW, what I was guessing was your 
+	// question is doable by setting object.matrix to be the product 
+	// of (1) the inverse of parent.matrixWorld and (2) your desired matrix. 
+	// – WestLangley
+	function ( gltf ) {
 
-// 	mesh.position.set( 10, 130, -117 );
-// 	mesh.rotation.set( 0, Math.PI / 2, 0 );
-// 	mesh.scale.set( 0.15, .15, .15 );
+		// scene.add( gltf.scene );
+		console.log(gltf.scene);
+		gltf.animations; // Array<THREE.AnimationClip>
+		gltf.scene; // THREE.Group
+		gltf.scenes; // Array<THREE.Group>
+		gltf.cameras; // Array<THREE.Camera>
+		gltf.asset; // Object
+		let fanuc = gltf.scene;
+		let full_fanuc = fanuc.clone().children[0];
+		let parent_matrix;
+		fanuc_gltf = gltf.scene.clone(false);
+		full_fanuc.children = [];
+		let children = fanuc.clone().children[0].children;
+		for (let i=0; i < children.length; i++){
+			switch (children[i].name){
+				case "occurrence_of_BaseJ1":
+					base = children[i];
+					break;
+				case "occurrence_of_J1J2":
+					fanuc_j1 = children[i];
+					break;
+				case "occurrence_of_J2J3":
+					fanuc_j2 = children[i];
+					break;
+				case "occurrence_of_J3J4":
+					fanuc_j3 = children[i];
+					break;
+				case "occurrence_of_J4J5":
+					fanuc_j4 = children[i];
+					break;
+				case "occurrence_of_J5J6":
+					fanuc_j5 = children[i];
+					break;
+				case "occurrence_of_J6End":
+					fanuc_j6 = children[i];
+					break;
+			}
+		}
+		console.log(children);
+		scene.attach(fanuc_gltf);
+		fanuc_gltf.attach(full_fanuc);
+		full_fanuc.attach(base);
+		base.attach(fanuc_j1);
+		fanuc_j1.attach(fanuc_j2);
+		fanuc_j2.attach(fanuc_j3);
+		fanuc_j3.attach(fanuc_j4);
+		fanuc_j4.attach(fanuc_j5);
+		fanuc_j5.attach(fanuc_j6);
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+		fanuc_gltf.scale.set(100, 100, 100);
+		// fanuc_gltf.rotation.set(0, - Math.PI/2, 0);
 
-// 	scene.add( mesh );
-// });
-// var loader6 = new STLLoader();
-// loader6.load( './static/stl/FANUC J6-End.stl', function ( geometry ) {
-// 	let meshMaterial = material2;
-//     if ( geometry.hasColors ) {
-// 			meshMaterial = new MeshPhongMaterial( { opacity: geometry.alpha, vertexColors: true } );
-// 	}	
-// 	const mesh = new Mesh( geometry, meshMaterial );
+		console.log(fanuc_gltf);
+	},
+	// called while loading is progressing
+	function ( xhr ) {
 
-// 	mesh.position.set( 10, 137, -127.5);
-// 	mesh.rotation.set( - Math.PI / 2, 0, 0 );
-// 	mesh.scale.set( 0.15, .15, .15 );
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-// 	mesh.castShadow = true;
-// 	mesh.receiveShadow = true;
+	},
+	// called when loading has errors
+	function ( error ) {
 
-// 	scene.add( mesh );
-// });
+		console.log( error );
 
+	}
+);
+
+// const urloader = new GLTFLoader();
+// var ur_gltf;
+// urloader.load(
+// 	// resource URL
+// 	'./static/gltf/UR3e_med.gltf',
+// 	// called when the resource is loaded
+// 	function ( gltf ) {
+
+// 		scene.add( gltf.scene );
+
+// 		gltf.animations; // Array<THREE.AnimationClip>
+// 		gltf.scene; // THREE.Group
+// 		gltf.scenes; // Array<THREE.Group>
+// 		gltf.cameras; // Array<THREE.Camera>
+// 		gltf.asset; // Object
+// 		ur_gltf = gltf.scene;
+// 		ur_gltf.scale.set(100, 100, 100);
+// 		ur_gltf.rotation.set(0, Math.PI, 0);
+// 		ur_gltf.position.set(50,0,0);
+// 		console.log(ur_gltf);
+// 	},
+// 	// called while loading is progressing
+// 	function ( xhr ) {
+
+// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+// 	},
+// 	// called when loading has errors
+// 	function ( error ) {
+
+// 		console.log( 'An error happened' );
+
+// 	}
+// );
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -633,20 +734,59 @@ function CCDIK(arm, target, tolerance, steps){
 	}
 }
 
+function CCDIKGLTF(model, anglelims, axes, target){
+	let tcp = new Vector3();
+	let targetDirection = new Vector3();
+	let endEffector = model.slice(-1)[0];
+	let ee = new Vector3();
+	endEffector.getWorldPosition(ee);
+	if (ee.distanceTo(target) <= 1){
+		return;
+	}
+	for (let i = model.length - 2; i >= 0; i--){
+		model[i].updateMatrixWorld();
+
+		let curr_axis = axes[i];
+		let angles = anglelims[i];
+
+        model[i].getWorldPosition(tcp);
+        endEffector.getWorldPosition(ee);
+
+        let vec_to_ee = ee.clone().sub(tcp).normalize();
+        let vec_to_target = target.clone().sub(tcp).normalize();
+
+        let fromToQuat = new Quaternion(0, 0, 0, 1).setFromUnitVectors(vec_to_ee, vec_to_target);
+        model[i].quaternion.multiply(fromToQuat.normalize());
+
+        let invRot = model[i].quaternion.clone().inverse().normalize();
+        let parentAxis = model[i].axis.clone().applyQuaternion(invRot).normalize();
+        fromToQuat.setFromUnitVectors(model[i].axis, parentAxis);
+        model[i].quaternion.multiply(fromToQuat.normalize());
+
+        // let clampedRot = model[i].rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
+        // model[i].rotation.setFromVector3(clampedRot);
+
+       	model[i].updateMatrixWorld();
+	}
+}
+
 var j1_angles = new Array(-179, 179);
-var j1_axis   = new Vector3(0,1,0);
+var j1_axis   = new Vector3(0,0,1);
 
 var j2_angles = new Array(-60, 60);
-var j2_axis   = new Vector3(0,0,1);
+var j2_axis   = new Vector3(0,1,0);
 
 var j3_angles = new Array(-30, 30);
-var j3_axis   = new Vector3(0,0,1);
+var j3_axis   = new Vector3(0,1,0);
 
 var j4_angles = new Array(-30, 30);
-var j4_axis   = new Vector3(0,0,1);
+var j4_axis   = new Vector3(1,0,0);
 
 var j5_angles = new Array(-30, 30);
-var j5_axis   = new Vector3(1,0,0);
+var j5_axis   = new Vector3(0,1,0);
+
+var j6_angles = new Array(0, 0);
+var j6_axis = new Vector3(0,0,0);
 
 // var j1 = new Vector3(0,0,0);
 // var j2 = new Vector3(0, -116, 137.484);
@@ -667,22 +807,55 @@ var fanuc_axes   = new Array(j1_axis, j2_axis, j3_axis, j4_axis, j5_axis);
 var fanuc_nodes = new Array(j1, j2, j3, j4, j5, j6);
 var fanuc_edges = new Array(new Array((0,1)),new Array((1,2)), new Array((2,3)), new Array((3,4)), new Array((4,5)));
 var fanuc_sizes = new Array([.01,.01,.01], [.01, .01, .01], [.01, .01, .01], [.01, .01, .01], [.01,.01,.01], [.005,.005,.005]);
-const test = new SimpleArm(fanuc_nodes, fanuc_edges, fanuc_angles, fanuc_axes, fanuc_sizes);
+// const test = new SimpleArm(fanuc_nodes, fanuc_edges, fanuc_angles, fanuc_axes, fanuc_sizes);
 
-// TESTING distanceBetween 
-console.log(distanceBetween(j1_axis, j2_axis));
-console.log(distanceBetween(new Vector3(10,20,30), new Vector3(5,2,8)));
-console.log(test.distances);
+// // TESTING distanceBetween 
+// console.log(distanceBetween(j1_axis, j2_axis));
+// console.log(distanceBetween(new Vector3(10,20,30), new Vector3(5,2,8)));
+// console.log(test.distances);
 
-// TESTING checkDistance and updateDistances
-console.log(test.checkDistances(new Array(179.88287927426558, 640, 116, 192, 256)));
-test.updateDistances();
+// // TESTING checkDistance and updateDistances
+// console.log(test.checkDistances(new Array(179.88287927426558, 640, 116, 192, 256)));
+// test.updateDistances();
 
-// TESTING maxDistance
-console.log(test.maxDistance());
+// // TESTING maxDistance
+// console.log(test.maxDistance());
+
+// var j1_model;
+// fanuc_j1.getWorldPosition(j1_model);
+// var j2_model;
+// fanuc_j2.getWorldPosition(j2_model);
+// var j3_model;
+// fanuc_j3.getWorldPosition(j3_model);
+// var j4_model;
+// fanuc_j4.getWorldPosition(j4_model);
+// var j5_model;
+// fanuc_j5.getWorldPosition(j5_model);
+// var j6_model;
+// fanuc_j6.getWorldPosition(j6_model);
+
+
+
+// var fanuc_gltf_nodes = new Array(j1_model, j2_model, j3_model, j4_model, j5_mode, j6_model);
+
 
 function animate() {
-	test.CCDIKIter(target2.position);
+	// test.CCDIKIter(target2.position);
+	// if (fanuc_j3){
+	// 	fanuc_j3.rotation.y += .1;
+	// }
+	if (fanuc_j1 && fanuc_j2 && fanuc_j3 && fanuc_j4 && fanuc_j5 && fanuc_j6 && !(fanuc_robot)){
+		var fanuc_robot = new Array(fanuc_j1, fanuc_j2, fanuc_j3, fanuc_j4, fanuc_j5, fanuc_j6);
+		fanuc_j1.axis = j1_axis;
+		fanuc_j2.axis = j2_axis;
+		fanuc_j3.axis = j3_axis;
+		fanuc_j4.axis = j4_axis;
+		fanuc_j5.axis = j5_axis;
+		fanuc_j6.axis = j6_axis;
+	}
+	if (fanuc_robot){
+		CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
+	}
     requestAnimationFrame(animate);
     controls.update();
  
