@@ -22,7 +22,7 @@ import {
   MeshLambertMaterial,
   Group,
   AxesHelper,
-  Matrix4
+  Matrix4,
 } from './three.module.js';
 
 import { OrbitControls } from './OrbitControls.js';
@@ -134,77 +134,22 @@ dragControls.addEventListener('hoveroff', function () {
 });
 const material2 = new MeshPhongMaterial( { color: 0xff5533, specular: 0x111111, shininess: 200 } );
 
+// // https://stackoverflow.com/questions/23385623/three-js-proper-way-to-add-and-remove-child-objects-using-three-sceneutils-atta
+// function reparentObject3D(subject, newParent)
+// {
+//     subject.matrix.copy(subject.matrixWorld);
+//     subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
+//     // subject.matrixAutoUpdate = false;
+//     newParent.add(subject);
+// }
 
-const fanuc2 = new GLTFLoader();
-var base_matrix; 
-var j1_matrix;
-var j2_matrix;
-var j3_matrix;
-var j4_matrix;
-var j5_matrix;
-var j6_matrix;
-var fanuc2_gltf;
-fanuc2.load(
-	// resource URL
-	'./static/gltf/FANUC.gltf',
-	// called when the resource is loaded
-	function ( gltf ) {
-
-		gltf.animations; // Array<THREE.AnimationClip>
-		gltf.scene; // THREE.Group
-		gltf.scenes; // Array<THREE.Group>
-		gltf.cameras; // Array<THREE.Camera>
-		gltf.asset; // Object
-		fanuc2_gltf = gltf.scene;
-		fanuc2_gltf.scale.set(100, 100, 100);
-		fanuc2_gltf.rotation.set(-Math.PI / 2, 0, 0);
-		// fanuc2_gltf.position.set(50,0,0);
-
-		// DO THIS IF YOU UPDATE THE MATRIX WORLD WITH THE ORIGINAL 
-		//fanuc2_gltf.matrixAutoUpdate = false;
-		fanuc2_gltf.visible = false;
-		//
-		console.log(fanuc2_gltf);
-		base_matrix = fanuc2_gltf.getObjectByName('occurrence_of_BaseJ1').matrix.clone(); 
-		j1_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J1J2').matrix.clone();
-		j2_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J2J3').matrix.clone();
-		j3_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J3J4').matrix.clone();
-		j4_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J4J5').matrix.clone();
-		j5_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J5J6').matrix.clone();
-		j6_matrix = fanuc2_gltf.getObjectByName('occurrence_of_J6End').matrix.clone();
-		scene.add( fanuc2_gltf );
-
-	},
-	// called while loading is progressing
-	function ( xhr ) {
-
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-
-	}
-);
-
-// https://stackoverflow.com/questions/23385623/three-js-proper-way-to-add-and-remove-child-objects-using-three-sceneutils-atta
-function reparentObject3D(subject, newParent)
-{
-    subject.matrix.copy(subject.matrixWorld);
-    subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
-    // subject.matrixAutoUpdate = false;
-    newParent.add(subject);
-}
-
-function reparentwithTarget(subject, target, newParent)
-{
-    subject.matrix.copy(target);
-    subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
-    // subject.matrixAutoUpdate = false;
-    newParent.add(subject);
-}
+// function reparentwithTarget(subject, target, newParent)
+// {
+//     subject.matrix.copy(target);
+//     subject.applyMatrix4(new Matrix4().getInverse(newParent.matrixWorld));
+//     // subject.matrixAutoUpdate = false;
+//     newParent.add(subject);
+// }
 
 const fanucloader = new GLTFLoader();
 var fanuc_gltf;
@@ -228,14 +173,16 @@ fanucloader.load(
 
 		// scene.add( gltf.scene );
 		console.log(gltf.scene);
-		gltf.animations; // Array<THREE.AnimationClip>
-		gltf.scene; // THREE.Group
-		gltf.scenes; // Array<THREE.Group>
-		gltf.cameras; // Array<THREE.Camera>
-		gltf.asset; // Object
+		// gltf.animations; // Array<THREE.AnimationClip>
+		// gltf.scene; // THREE.Group
+		// gltf.scenes; // Array<THREE.Group>
+		// gltf.cameras; // Array<THREE.Camera>
+		// gltf.asset; // Object
+
+		// let fanuc_j2_original = new Group();
+
 		let fanuc = gltf.scene;
 		let full_fanuc = fanuc.clone().children[0];
-		let parent_matrix;
 		fanuc_gltf = gltf.scene.clone(false);
 		full_fanuc.children = [];
 		let children = fanuc.clone().children[0].children;
@@ -248,6 +195,8 @@ fanucloader.load(
 					fanuc_j1 = children[i];
 					break;
 				case "occurrence_of_J2J3":
+					// fanuc_j2_original = children[i];
+					// fanuc_j2_original.rotateY(radians(90));
 					fanuc_j2 = children[i];
 					break;
 				case "occurrence_of_J3J4":
@@ -268,13 +217,18 @@ fanucloader.load(
 		scene.attach(fanuc_gltf);
 		fanuc_gltf.attach(full_fanuc);
 		full_fanuc.attach(base);
+		// fanuc_j1.rotation.x = radians(90);
+		// fanuc_j1.rotation.z = radians(90);
 		base.attach(fanuc_j1);
+		// fanuc_j2.rotation.y = radians(18-);
+		// fanuc_j2.rotation.z = radians(90);
 		fanuc_j1.attach(fanuc_j2);
 		fanuc_j2.attach(fanuc_j3);
 		fanuc_j3.attach(fanuc_j4);
 		fanuc_j4.attach(fanuc_j5);
 		fanuc_j5.attach(fanuc_j6);
 
+		
 		fanuc_gltf.scale.set(100, 100, 100);
 		// fanuc_gltf.rotation.set(0, - Math.PI/2, 0);
 
@@ -294,40 +248,87 @@ fanucloader.load(
 	}
 );
 
-// const urloader = new GLTFLoader();
-// var ur_gltf;
-// urloader.load(
-// 	// resource URL
-// 	'./static/gltf/UR3e_med.gltf',
-// 	// called when the resource is loaded
-// 	function ( gltf ) {
+const urloader = new GLTFLoader();
+var ur_gltf;
+var urbase;
+var urj1;
+var urj2;
+var urj3;
+var urj4;
+var urj5;
+var urj6;
+// './static/gltf/UR3e_med.gltf'
+urloader.load(
+	// resource URL
+	'./static/gltf/UR3e_Remated.gltf',
+	// called when the resource is loaded
+	function ( gltf ) {
 
-// 		scene.add( gltf.scene );
+		console.log(gltf.scene);
+		// gltf.animations; // Array<THREE.AnimationClip>
+		// gltf.scene; // THREE.Group
+		// gltf.scenes; // Array<THREE.Group>
+		// gltf.cameras; // Array<THREE.Camera>
+		// gltf.asset; // Object
+		let ur3 = gltf.scene;
+		let full_ur3 = ur3.clone().children[0];
+		ur_gltf = gltf.scene.clone(false);
+		full_ur3.children = [];
+		let children = ur3.clone().children[0].children;
+		console.log(children);
+		for (let i=0; i < children.length; i++){
+			switch (children[i].name){
+				case "occurrence_of_Base":
+					urbase = children[i];
+					break;
+				case "occurrence_of_Shoulder":
+					urj1 = children[i];
+					break;
+				case "occurrence_of_Elbow":
+					urj2 = children[i];
+					break;
+				case "occurrence_of_Wrist_1":
+					urj3 = children[i];
+					break;
+				case "occurrence_of_Wrist_2":
+					urj4 = children[i];
+					break;
+				case "occurrence_of_Wrist_3":
+					urj5 = children[i];
+					break;
+				case "occurrence_of_Tool_flange":
+					urj6 = children[i];
+					break;
+			}
+		}
+		scene.attach(ur_gltf);
+		ur_gltf.attach(full_ur3);
+		full_ur3.attach(urbase);
+		urbase.attach(urj1);
+		urj1.attach(urj2);
+		urj2.attach(urj3);
+		urj3.attach(urj4);
+		urj4.attach(urj5);
+		urj5.attach(urj6);
 
-// 		gltf.animations; // Array<THREE.AnimationClip>
-// 		gltf.scene; // THREE.Group
-// 		gltf.scenes; // Array<THREE.Group>
-// 		gltf.cameras; // Array<THREE.Camera>
-// 		gltf.asset; // Object
-// 		ur_gltf = gltf.scene;
-// 		ur_gltf.scale.set(100, 100, 100);
-// 		ur_gltf.rotation.set(0, Math.PI, 0);
-// 		ur_gltf.position.set(50,0,0);
-// 		console.log(ur_gltf);
-// 	},
-// 	// called while loading is progressing
-// 	function ( xhr ) {
+		ur_gltf.scale.set(100, 100, 100);
+		ur_gltf.position.set(75,0,-75);
 
-// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+		console.log(ur_gltf);
+	},
+	// called while loading is progressing
+	function ( xhr ) {
 
-// 	},
-// 	// called when loading has errors
-// 	function ( error ) {
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-// 		console.log( 'An error happened' );
+	},
+	// called when loading has errors
+	function ( error ) {
 
-// 	}
-// );
+		console.log( error );
+
+	}
+);
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -733,60 +734,164 @@ function CCDIK(arm, target, tolerance, steps){
 		ctr++;
 	}
 }
+// function maxDist(model){
+// 	let temp_pos = new Array();
+// 	let temp = new Vector3();
+// 	model[0].getWorldPosition(temp)
+// 	let base_length = temp.length();
+// 	let summ_dists = base_length;
+// 	model.forEach(e => {e.getWorldPosition(temp); temp_pos.push(temp);});
 
+// 	for (let i=0; i < model.length - 1; i++){
+// 		summ_dists += Math.abs(temp_pos[i].distanceTo(temp_pos[i+1]));
+// 	}
+// 	return summ_dists;
+// }
+
+	// if (target.length() > maxDist(model)){
+	// 	let lastJoint = model.slice(-2)[0];
+	// 	// just make sure the end effector is pointing towards
+	// 	// the target 
+	// 	lastJoint.lookAt(target);
+	// 	let invRot = lastJoint.quaternion.clone().inverse();
+ //        let parentAxis = lastJoint.axis.clone().applyQuaternion(invRot);
+ //        let fromToQuat = new Quaternion(0,0,0,1).setFromUnitVectors(lastJoint.axis, parentAxis);
+ //        lastJoint.quaternion.multiply(fromToQuat);
+ //        return;
+	// }
+
+
+// Optimizations from https://github.com/mrdoob/three.js/blob/master/examples/jsm/animation/CCDIKSolver.js
+// 
 function CCDIKGLTF(model, anglelims, axes, target){
+	let tcp             = new Vector3();
+	let targetDirection = new Vector3();
+	let invQ            = new Quaternion();
+	let scale_junk      = new Vector3();
+	let endEffector     = model.slice(-1)[0];
+	let ee              = new Vector3();
+	let temp_ee         = new Vector3();
+	let temp_target     = new Vector3();
+	let axis            = new Vector3();
+	let q               = new Quaternion();
+	// endEffector.getWorldPosition(ee);
+
+	for (let i = model.length - 2; i >= 0; i--){
+		let curr = model[i];
+        // curr.updateMatrixWorld();
+
+        let curr_axis = axes[i];
+        let angles = anglelims[i];
+
+        curr.matrixWorld.decompose(tcp, invQ, scale_junk);
+        invQ.inverse();
+        ee.setFromMatrixPosition(endEffector.matrixWorld);
+
+        endEffector.getWorldPosition(ee);
+
+        temp_ee.subVectors(ee, tcp);
+        temp_ee.applyQuaternion(invQ);
+        temp_ee.normalize();
+
+        temp_target.subVectors(target, tcp);
+        temp_target.applyQuaternion(invQ);
+        temp_target.normalize();
+
+        let angle = temp_target.dot(temp_ee);
+        if ( angle > 1.0 ) {
+			angle = 1.0;
+		} else if ( angle < - 1.0 ) {
+			angle = - 1.0;
+		}
+
+		angle = Math.acos( angle );
+
+		if ( angle < 1e-5 ) continue;
+
+		if (angle < angles[0]) {
+			angle = angles[0];
+		}
+		if (angle > angles[1] ) {
+			angle = angles[1];
+		}
+
+		axis.crossVectors( temp_ee, temp_target );
+		axis.normalize();
+
+		q.setFromAxisAngle( axis, angle );
+		curr.quaternion.multiply( q );
+
+        // let toolDirection = ee.clone().sub(tcp).normalize();
+        // let targetDirection = target.clone().sub(tcp).normalize();
+
+        // let fromToQuat = new Quaternion(0, 0, 0, 1).setFromUnitVectors(toolDirection, targetDirection);
+        // curr.quaternion.multiply(fromToQuat);
+
+        let invRot = curr.quaternion.clone().inverse();
+        let parentAxis = curr.axis.clone().applyQuaternion(invRot);
+        let fromToQuat = new Quaternion(0,0,0,1).setFromUnitVectors(curr.axis, parentAxis);
+        curr.quaternion.multiply(fromToQuat);
+
+        let clampedRot = curr.rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
+        curr.rotation.setFromVector3(clampedRot);
+
+        curr.updateMatrixWorld();
+	}
+}
+
+function LOOKATCCD(model, anglelims, axes, target){
 	let tcp = new Vector3();
 	let targetDirection = new Vector3();
 	let endEffector = model.slice(-1)[0];
 	let ee = new Vector3();
 	endEffector.getWorldPosition(ee);
-	if (ee.distanceTo(target) <= 1){
-		return;
-	}
+
 	for (let i = model.length - 2; i >= 0; i--){
-		model[i].updateMatrixWorld();
+		let curr = model[i];
+        curr.updateMatrixWorld();
 
-		let curr_axis = axes[i];
-		let angles = anglelims[i];
+        let curr_axis = axes[i];
+        let angles = anglelims[i];
 
-        model[i].getWorldPosition(tcp);
-        endEffector.getWorldPosition(ee);
+        // let tcp = target.clone();
+        // let toolDirection = curr.worldToLocal(tcp);
+        curr.lookAt(target);
 
-        let vec_to_ee = ee.clone().sub(tcp).normalize();
-        let vec_to_target = target.clone().sub(tcp).normalize();
+        let invRot = curr.quaternion.clone().inverse();
+        let parentAxis = curr.axis.clone().applyQuaternion(invRot);
+        let fromToQuat = new Quaternion(0,0,0,1).setFromUnitVectors(curr.axis, parentAxis);
+        curr.quaternion.multiply(fromToQuat);
 
-        let fromToQuat = new Quaternion(0, 0, 0, 1).setFromUnitVectors(vec_to_ee, vec_to_target);
-        model[i].quaternion.multiply(fromToQuat.normalize());
+        // let clampedRot = curr.rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
+        // curr.rotation.setFromVector3(clampedRot);
 
-        let invRot = model[i].quaternion.clone().inverse().normalize();
-        let parentAxis = model[i].axis.clone().applyQuaternion(invRot).normalize();
-        fromToQuat.setFromUnitVectors(model[i].axis, parentAxis);
-        model[i].quaternion.multiply(fromToQuat.normalize());
-
-        // let clampedRot = model[i].rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
-        // model[i].rotation.setFromVector3(clampedRot);
-
-       	model[i].updateMatrixWorld();
+        curr.updateMatrixWorld();
 	}
 }
 
 var j1_angles = new Array(-179, 179);
 var j1_axis   = new Vector3(0,0,1);
+var urj1_axis = new Vector3(0,1,0);
 
-var j2_angles = new Array(-60, 60);
+var j2_angles = new Array(-120, 60);
 var j2_axis   = new Vector3(0,1,0);
+var urj2_axis = new Vector3(0,0,1);
 
-var j3_angles = new Array(-30, 30);
+var j3_angles = new Array(-60, 60);
 var j3_axis   = new Vector3(0,1,0);
+var urj3_axis = new Vector3(0,1,0);
 
-var j4_angles = new Array(-30, 30);
+var j4_angles = new Array(-120, 120);
 var j4_axis   = new Vector3(1,0,0);
+var urj4_axis = new Vector3(0,0,1);
 
-var j5_angles = new Array(-30, 30);
+var j5_angles = new Array(-179, 179);
 var j5_axis   = new Vector3(0,1,0);
+var urj5_axis = new Vector3(1,0,0);
 
 var j6_angles = new Array(0, 0);
 var j6_axis = new Vector3(0,0,0);
+var urj6_axis = new Vector3(0,0,0);
 
 // var j1 = new Vector3(0,0,0);
 // var j2 = new Vector3(0, -116, 137.484);
@@ -804,6 +909,8 @@ var j6 = new Vector3(2.56, 9.69484, 0);
 
 var fanuc_angles = new Array(j1_angles, j2_angles, j3_angles, j4_angles, j5_angles);
 var fanuc_axes   = new Array(j1_axis, j2_axis, j3_axis, j4_axis, j5_axis);
+var ur_angles = new Array([-179, 179], [-179, 179], [-179, 179], [-179, 179], [-179, 179]);
+var ur_axes = new Array(urj1_axis, urj2_axis, urj3_axis, urj4_axis, urj5_axis, urj6_axis);
 var fanuc_nodes = new Array(j1, j2, j3, j4, j5, j6);
 var fanuc_edges = new Array(new Array((0,1)),new Array((1,2)), new Array((2,3)), new Array((3,4)), new Array((4,5)));
 var fanuc_sizes = new Array([.01,.01,.01], [.01, .01, .01], [.01, .01, .01], [.01, .01, .01], [.01,.01,.01], [.005,.005,.005]);
@@ -838,23 +945,44 @@ var fanuc_sizes = new Array([.01,.01,.01], [.01, .01, .01], [.01, .01, .01], [.0
 
 // var fanuc_gltf_nodes = new Array(j1_model, j2_model, j3_model, j4_model, j5_mode, j6_model);
 
-
+var check = false;
+var fanuc_robot = new Array();
+var ur_robot = new Array();
+var check_coords = false;
 function animate() {
 	// test.CCDIKIter(target2.position);
 	// if (fanuc_j3){
 	// 	fanuc_j3.rotation.y += .1;
 	// }
-	if (fanuc_j1 && fanuc_j2 && fanuc_j3 && fanuc_j4 && fanuc_j5 && fanuc_j6 && !(fanuc_robot)){
-		var fanuc_robot = new Array(fanuc_j1, fanuc_j2, fanuc_j3, fanuc_j4, fanuc_j5, fanuc_j6);
-		fanuc_j1.axis = j1_axis;
-		fanuc_j2.axis = j2_axis;
-		fanuc_j3.axis = j3_axis;
-		fanuc_j4.axis = j4_axis;
-		fanuc_j5.axis = j5_axis;
-		fanuc_j6.axis = j6_axis;
+	if (check === false){
+		if (fanuc_j1 && fanuc_j2 && fanuc_j3 && fanuc_j4 && fanuc_j5 && fanuc_j6){
+			// fanuc_j2.rotation.set(0, -Math.PI / 2, 0);
+			fanuc_robot = new Array(fanuc_j1, fanuc_j2, fanuc_j3, fanuc_j4, fanuc_j5, fanuc_j6);
+			fanuc_j1.axis = j1_axis;
+			fanuc_j2.axis = j2_axis;
+			fanuc_j3.axis = j3_axis;
+			fanuc_j4.axis = j4_axis;
+			fanuc_j5.axis = j5_axis;
+			fanuc_j6.axis = j6_axis;
+			console.log("TH");
+		}
+		if (urj1 && urj2 && urj3 && urj4 && urj5 && urj6){
+			ur_robot = new Array(urj1, urj2, urj3, urj4, urj5, urj6);
+			urj1.axis = urj1_axis;
+			urj2.axis = urj2_axis;
+			urj3.axis = urj3_axis;
+			urj4.axis = urj4_axis;
+			urj5.axis = urj5_axis;
+			urj6.axis = urj6_axis;
+			console.log("TH");
+			check = true;
+		}
 	}
-	if (fanuc_robot){
+		
+	if (fanuc_robot.length != 0){
 		CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
+		CCDIKGLTF(ur_robot, ur_angles, ur_axes, target2.position);
+		if (!check_coords) { console.log(ur_robot); console.log(fanuc_robot); check_coords = true };
 	}
     requestAnimationFrame(animate);
     controls.update();
