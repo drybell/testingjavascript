@@ -29,6 +29,7 @@ import { OrbitControls } from './OrbitControls.js';
 import { DragControls } from './DragControls.js';
 import { STLLoader } from './STLLoader.module.js';
 import { GLTFLoader } from './GLTFLoader.js';
+import { GLTFExporter } from './GLTFExporter.js';
 
 const container = document.querySelector('#container');
 const scene = new Scene();
@@ -213,25 +214,40 @@ fanucloader.load(
 					break;
 			}
 		}
+		let j1axis = new AxesHelper( .20 );
+		let j2axis = new AxesHelper( .20 );
+		let j3axis = new AxesHelper( .20 );
+		let j4axis = new AxesHelper( .20 );
+		let j5axis = new AxesHelper( .20 );
+		let j6axis = new AxesHelper( .20 );
+		let j2axisstatic = new AxesHelper( .20 );
 		console.log(children);
 		scene.attach(fanuc_gltf);
 		fanuc_gltf.attach(full_fanuc);
 		full_fanuc.attach(base);
 		// fanuc_j1.rotation.x = radians(90);
-		// fanuc_j1.rotation.z = radians(90);
+		// fanuc_j1.rotation.z = radians(-105);
 		base.attach(fanuc_j1);
+		fanuc_j1.add(j1axis);
 		// fanuc_j2.rotation.y = radians(18-);
-		// fanuc_j2.rotation.z = radians(90);
+		// fanuc_j2.rotation.y = Math.PI/2;
+		// fanuc_j2.rotateY(Math.PI/2);
 		fanuc_j1.attach(fanuc_j2);
+		fanuc_j1.add(j1axis);
 		fanuc_j2.attach(fanuc_j3);
+		fanuc_j2.add(j2axis);
+		// fanuc_j2.attach(j2axisstatic);
 		fanuc_j3.attach(fanuc_j4);
+		fanuc_j3.add(j3axis);
 		fanuc_j4.attach(fanuc_j5);
+		fanuc_j4.add(j4axis);
 		fanuc_j5.attach(fanuc_j6);
+		fanuc_j5.add(j5axis);
 
 		
 		fanuc_gltf.scale.set(100, 100, 100);
 		// fanuc_gltf.rotation.set(0, - Math.PI/2, 0);
-
+		
 		console.log(fanuc_gltf);
 	},
 	// called while loading is progressing
@@ -247,74 +263,32 @@ fanucloader.load(
 
 	}
 );
-
-const urloader = new GLTFLoader();
-var ur_gltf;
-var urbase;
-var urj1;
-var urj2;
-var urj3;
-var urj4;
-var urj5;
-var urj6;
-// './static/gltf/UR3e_med.gltf'
-urloader.load(
+const fanucloader2 = new GLTFLoader();
+var exported_fanuc;
+fanucloader2.load(
 	// resource URL
-	'./static/gltf/UR3e_Remated.gltf',
+	'./static/gltf/exported_fanuc2.gltf',
 	// called when the resource is loaded
+	// FWIW, what I was guessing was your 
+	// question is doable by setting object.matrix to be the product 
+	// of (1) the inverse of parent.matrixWorld and (2) your desired matrix. 
+	// – WestLangley
 	function ( gltf ) {
 
-		console.log(gltf.scene);
+		// scene.add( gltf.scene );
 		// gltf.animations; // Array<THREE.AnimationClip>
 		// gltf.scene; // THREE.Group
 		// gltf.scenes; // Array<THREE.Group>
 		// gltf.cameras; // Array<THREE.Camera>
 		// gltf.asset; // Object
-		let ur3 = gltf.scene;
-		let full_ur3 = ur3.clone().children[0];
-		ur_gltf = gltf.scene.clone(false);
-		full_ur3.children = [];
-		let children = ur3.clone().children[0].children;
-		console.log(children);
-		for (let i=0; i < children.length; i++){
-			switch (children[i].name){
-				case "occurrence_of_Base":
-					urbase = children[i];
-					break;
-				case "occurrence_of_Shoulder":
-					urj1 = children[i];
-					break;
-				case "occurrence_of_Elbow":
-					urj2 = children[i];
-					break;
-				case "occurrence_of_Wrist_1":
-					urj3 = children[i];
-					break;
-				case "occurrence_of_Wrist_2":
-					urj4 = children[i];
-					break;
-				case "occurrence_of_Wrist_3":
-					urj5 = children[i];
-					break;
-				case "occurrence_of_Tool_flange":
-					urj6 = children[i];
-					break;
-			}
-		}
-		scene.attach(ur_gltf);
-		ur_gltf.attach(full_ur3);
-		full_ur3.attach(urbase);
-		urbase.attach(urj1);
-		urj1.attach(urj2);
-		urj2.attach(urj3);
-		urj3.attach(urj4);
-		urj4.attach(urj5);
-		urj5.attach(urj6);
 
-		ur_gltf.scale.set(100, 100, 100);
-		ur_gltf.position.set(75,0,-75);
-
-		console.log(ur_gltf);
+		// let fanuc_j2_original = new Group();
+		exported_fanuc = gltf.scene;
+		scene.add(exported_fanuc);
+		exported_fanuc.position.set(50,0,50);
+		
+		
+		console.log(exported_fanuc);
 	},
 	// called while loading is progressing
 	function ( xhr ) {
@@ -329,6 +303,112 @@ urloader.load(
 
 	}
 );
+
+var link = document.createElement( 'a' );
+link.style.display = 'none';
+document.body.appendChild( link ); // Firefox workaround, see #6594
+
+function downloadJSON( blob, filename ) {
+
+	link.href = URL.createObjectURL( blob );
+	link.download = filename;
+	link.click();
+	// URL.revokeObjectURL( url ); breaks Firefox...
+
+}
+
+const urloader = new GLTFLoader();
+var ur_gltf;
+var urbase;
+var urj1;
+var urj2;
+var urj3;
+var urj4;
+var urj5;
+var urj6;
+// './static/gltf/UR3e_med.gltf'
+// urloader.load(
+// 	// resource URL
+// 	'./static/gltf/UR3e_Remated.gltf',
+// 	// called when the resource is loaded
+// 	function ( gltf ) {
+
+// 		console.log(gltf.scene);
+// 		// gltf.animations; // Array<THREE.AnimationClip>
+// 		// gltf.scene; // THREE.Group
+// 		// gltf.scenes; // Array<THREE.Group>
+// 		// gltf.cameras; // Array<THREE.Camera>
+// 		// gltf.asset; // Object
+// 		let ur3 = gltf.scene;
+// 		let full_ur3 = ur3.clone().children[0];
+// 		ur_gltf = gltf.scene.clone(false);
+// 		full_ur3.children = [];
+// 		let children = ur3.clone().children[0].children;
+// 		console.log(children);
+// 		for (let i=0; i < children.length; i++){
+// 			switch (children[i].name){
+// 				case "occurrence_of_Base":
+// 					urbase = children[i];
+// 					break;
+// 				case "occurrence_of_Shoulder":
+// 					urj1 = children[i];
+// 					break;
+// 				case "occurrence_of_Elbow":
+// 					urj2 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_1":
+// 					urj3 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_2":
+// 					urj4 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_3":
+// 					urj5 = children[i];
+// 					break;
+// 				case "occurrence_of_Tool_flange":
+// 					urj6 = children[i];
+// 					break;
+// 			}
+// 		}
+// 		let	j1axis = new AxesHelper( .20 );
+// 		let j2axis = new AxesHelper( .20 );
+// 		let j3axis = new AxesHelper( .20 );
+// 		let j4axis = new AxesHelper( .20 );
+// 		let j5axis = new AxesHelper( .20 );
+// 		let j6axis = new AxesHelper( .20 );
+// 		scene.attach(ur_gltf);
+// 		ur_gltf.attach(full_ur3);
+// 		full_ur3.attach(urbase);
+// 		urbase.attach(urj1);
+// 		urj1.attach(urj2);
+// 		urj1.add(j1axis);
+// 		urj2.attach(urj3);
+// 		urj2.add(j2axis);
+// 		urj3.attach(urj4);
+// 		urj3.add(j3axis);
+// 		urj4.attach(urj5);
+// 		urj4.add(j4axis);
+// 		urj5.attach(urj6);
+// 		urj5.add(j5axis);
+
+// 		ur_gltf.scale.set(100, 100, 100);
+// 		ur_gltf.position.set(75,0,-75);
+
+// 		console.log(ur_gltf);
+// 	},
+// 	// called while loading is progressing
+// 	function ( xhr ) {
+
+// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+// 	},
+// 	// called when loading has errors
+// 	function ( error ) {
+
+// 		console.log( error );
+
+// 	}
+// );
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
@@ -760,9 +840,12 @@ function CCDIK(arm, target, tolerance, steps){
  //        return;
 	// }
 
-
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 // Optimizations from https://github.com/mrdoob/three.js/blob/master/examples/jsm/animation/CCDIKSolver.js
 // 
+
 function CCDIKGLTF(model, anglelims, axes, target){
 	let tcp             = new Vector3();
 	let targetDirection = new Vector3();
@@ -777,8 +860,9 @@ function CCDIKGLTF(model, anglelims, axes, target){
 	// endEffector.getWorldPosition(ee);
 
 	for (let i = model.length - 2; i >= 0; i--){
+		// console.log(i);
 		let curr = model[i];
-        // curr.updateMatrixWorld();
+        curr.updateMatrixWorld();
 
         let curr_axis = axes[i];
         let angles = anglelims[i];
@@ -821,22 +905,94 @@ function CCDIKGLTF(model, anglelims, axes, target){
 		q.setFromAxisAngle( axis, angle );
 		curr.quaternion.multiply( q );
 
-        // let toolDirection = ee.clone().sub(tcp).normalize();
-        // let targetDirection = target.clone().sub(tcp).normalize();
-
-        // let fromToQuat = new Quaternion(0, 0, 0, 1).setFromUnitVectors(toolDirection, targetDirection);
-        // curr.quaternion.multiply(fromToQuat);
-
         let invRot = curr.quaternion.clone().inverse();
         let parentAxis = curr.axis.clone().applyQuaternion(invRot);
+        // console.log(parentAxis);
+
         let fromToQuat = new Quaternion(0,0,0,1).setFromUnitVectors(curr.axis, parentAxis);
-        curr.quaternion.multiply(fromToQuat);
+        let eulercheck = new Euler().setFromQuaternion(fromToQuat);
+  //       let angle2 = Math.acos( curr_axis.dot(parentAxis));
+  //       if (curr_axis.toArray() === [1,0,0]){
+		// 	curr.rotateX(eulercheck.toArray()[0]);
+		// }
+		// else if (curr_axis.toArray() === [0,1,0]){
+		// 	curr.rotateY(eulercheck.toArray()[0]);
+		// }
+		// else {
+		// 	curr.rotateZ(eulercheck.toArray()[0]);
+		// }
 
-        let clampedRot = curr.rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
-        curr.rotation.setFromVector3(clampedRot);
-
+        curr.quaternion.multiply(fromToQuat); 
+        // model[1].rotation.y = -Math.PI/2;
+		// model[1].rotation.z = 0;
+        // let clampedRot = curr.rotation.toVector3().clampScalar(radians(angles[0]), radians(angles[1]));
+        // curr.rotation.setFromVector3(clampedRot);
         curr.updateMatrixWorld();
+        // console.log(curr.rotation);
 	}
+}
+
+function CCDSINGULAR(curr, endEffector, angles, curr_axis, target){
+	let tcp             = new Vector3();
+	let targetDirection = new Vector3();
+	let invQ            = new Quaternion();
+	let scale_junk      = new Vector3();
+	let ee              = new Vector3();
+	let temp_ee         = new Vector3();
+	let temp_target     = new Vector3();
+	let axis            = new Vector3();
+	let q               = new Quaternion();
+	// endEffector.getWorldPosition(ee);
+	// console.log(i);
+    curr.updateMatrixWorld();
+
+    curr.matrixWorld.decompose(tcp, invQ, scale_junk);
+    invQ.inverse();
+    ee.setFromMatrixPosition(endEffector.matrixWorld);
+
+    endEffector.getWorldPosition(ee);
+
+    temp_ee.subVectors(ee, tcp);
+    temp_ee.applyQuaternion(invQ);
+    temp_ee.normalize();
+
+    temp_target.subVectors(target, tcp);
+    temp_target.applyQuaternion(invQ);
+    temp_target.normalize();
+
+    let angle = temp_target.dot(temp_ee);
+    if ( angle > 1.0 ) {
+		angle = 1.0;
+	} else if ( angle < - 1.0 ) {
+		angle = - 1.0;
+	}
+
+	angle = Math.acos( angle );
+
+	if ( angle < 1e-5 ) return;
+
+	if (angle < angles[0]) {
+		angle = angles[0];
+	}
+	if (angle > angles[1] ) {
+		angle = angles[1];
+	}
+
+	axis.crossVectors( temp_ee, temp_target );
+	axis.normalize();
+
+	q.setFromAxisAngle( axis, angle );
+	curr.quaternion.multiply( q );
+
+    let invRot = curr.quaternion.clone().inverse();
+    let parentAxis = curr.axis.clone().applyQuaternion(invRot);
+    // console.log(parentAxis);
+
+    let fromToQuat = new Quaternion(0,0,0,1).setFromUnitVectors(curr.axis, parentAxis);
+
+    curr.quaternion.multiply(fromToQuat); 
+    curr.updateMatrixWorld();
+    // console.log(curr.rotation);
 }
 
 function LOOKATCCD(model, anglelims, axes, target){
@@ -949,10 +1105,12 @@ var check = false;
 var fanuc_robot = new Array();
 var ur_robot = new Array();
 var check_coords = false;
+var export_flag = true;
+// CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
 function animate() {
 	// test.CCDIKIter(target2.position);
-	// if (fanuc_j3){
-	// 	fanuc_j3.rotation.y += .1;
+	// if (fanuc_j2){
+	// 	fanuc_j2.rotateY(.1);
 	// }
 	if (check === false){
 		if (fanuc_j1 && fanuc_j2 && fanuc_j3 && fanuc_j4 && fanuc_j5 && fanuc_j6){
@@ -964,6 +1122,7 @@ function animate() {
 			fanuc_j4.axis = j4_axis;
 			fanuc_j5.axis = j5_axis;
 			fanuc_j6.axis = j6_axis;
+			check = true;
 			console.log("TH");
 		}
 		if (urj1 && urj2 && urj3 && urj4 && urj5 && urj6){
@@ -978,10 +1137,29 @@ function animate() {
 			check = true;
 		}
 	}
+
+	if (!export_flag && fanuc_gltf !== undefined) {
+		// Instantiate a exporter
+		const exporter = new GLTFExporter();
+
+		// Parse the input and generate the glTF output
+		exporter.parse( fanuc_gltf, function ( gltf ) {
+			console.log( gltf );
+			let output = JSON.stringify( gltf, null, 2 );
+			let blob_output = new Blob( [ output ], { type: 'text/plain' } );
+			console.log( output );
+			downloadJSON( blob_output ,'scene.gltf' );
+		} ); 
+		export_flag = true;
+	}
 		
 	if (fanuc_robot.length != 0){
-		CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
-		CCDIKGLTF(ur_robot, ur_angles, ur_axes, target2.position);
+		// CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
+		// CCDIKGLTF(ur_robot, ur_angles, ur_axes, target2.position);
+		// for (let i=0; i <= fanuc_robot.length - 2; i++){
+		// 	await sleep(1000);
+		// 	CCDSINGULAR(fanuc_robot[i], fanuc_robot.slice(-1)[0], fanuc_angles[i], fanuc_axes[i], target2.position);
+		// }
 		if (!check_coords) { console.log(ur_robot); console.log(fanuc_robot); check_coords = true };
 	}
     requestAnimationFrame(animate);
