@@ -316,11 +316,11 @@ fanucloader.load(
 			}
 		}
 		let j1axis = new AxesHelper( .50 );
-		// let j2axis = new AxesHelper( .20 );
-		// let j3axis = new AxesHelper( .20 );
-		// let j4axis = new AxesHelper( .20 );
-		// let j5axis = new AxesHelper( .20 );
-		// let j6axis = new AxesHelper( .20 );
+		let j2axis = new AxesHelper( .20 );
+		let j3axis = new AxesHelper( .20 );
+		let j4axis = new AxesHelper( .20 );
+		let j5axis = new AxesHelper( .20 );
+		let j6axis = new AxesHelper( .20 );
 		// let j2axisstatic = new AxesHelper( .20 );
 		console.log(children);
 		scene.attach(fanuc_gltf);
@@ -334,16 +334,16 @@ fanucloader.load(
 		// fanuc_j2.rotation.y = Math.PI/2;
 		// fanuc_j2.rotateY(Math.PI/2);
 		fanuc_j1.attach(fanuc_j2);
-		// fanuc_j1.add(j1axis);
+		fanuc_j1.add(j1axis);
 		fanuc_j2.attach(fanuc_j3);
-		// fanuc_j2.add(j2axis);
+		fanuc_j2.add(j2axis);
 		// fanuc_j2.attach(j2axisstatic);
 		fanuc_j3.attach(fanuc_j4);
-		// fanuc_j3.add(j3axis);
+		fanuc_j3.add(j3axis);
 		fanuc_j4.attach(fanuc_j5);
-		// fanuc_j4.add(j4axis);
+		fanuc_j4.add(j4axis);
 		fanuc_j5.attach(fanuc_j6);
-		// fanuc_j5.add(j5axis);
+		fanuc_j5.add(j5axis);
 
 		
 		fanuc_gltf.scale.set(100, 100, 100);
@@ -590,49 +590,49 @@ class FANUC extends Group {
 
 // previousOrientation = actualOrientation;
 
-const mir_loader = new GLTFLoader();
-var mir;
-mir_loader.load(
-	// resource URL
-	'./static/gltf/MIRCOARSE.gltf',
-	// called when the resource is loaded
-	// FWIW, what I was guessing was your 
-	// question is doable by setting object.matrix to be the product 
-	// of (1) the inverse of parent.matrixWorld and (2) your desired matrix. 
-	// – WestLangley
-	function ( gltf ) {
+// const mir_loader = new GLTFLoader();
+// var mir;
+// mir_loader.load(
+// 	// resource URL
+// 	'./static/gltf/MIRCOARSE.gltf',
+// 	// called when the resource is loaded
+// 	// FWIW, what I was guessing was your 
+// 	// question is doable by setting object.matrix to be the product 
+// 	// of (1) the inverse of parent.matrixWorld and (2) your desired matrix. 
+// 	// – WestLangley
+// 	function ( gltf ) {
 
-		// scene.add( gltf.scene );
-		// gltf.animations; // Array<THREE.AnimationClip>
-		// gltf.scene; // THREE.Group
-		// gltf.scenes; // Array<THREE.Group>
-		// gltf.cameras; // Array<THREE.Camera>
-		// gltf.asset; // Object
+// 		// scene.add( gltf.scene );
+// 		// gltf.animations; // Array<THREE.AnimationClip>
+// 		// gltf.scene; // THREE.Group
+// 		// gltf.scenes; // Array<THREE.Group>
+// 		// gltf.cameras; // Array<THREE.Camera>
+// 		// gltf.asset; // Object
 
-		// let fanuc_j2_original = new Group();
-		let j1axis = new AxesHelper( .50 );
-		mir = gltf.scene;
-		scene.add(mir);
-		mir.add(j1axis);
-		mir.position.set(800,0,290);
-		mir.scale.set(100,100,100);
-		mir.rotateY(radians(-155));
+// 		// let fanuc_j2_original = new Group();
+// 		let j1axis = new AxesHelper( .50 );
+// 		mir = gltf.scene;
+// 		scene.add(mir);
+// 		mir.add(j1axis);
+// 		mir.position.set(800,0,290);
+// 		mir.scale.set(100,100,100);
+// 		mir.rotateY(radians(-155));
 		
-		console.log(mir);
-	},
-	// called while loading is progressing
-	function ( xhr ) {
+// 		console.log(mir);
+// 	},
+// 	// called while loading is progressing
+// 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-	},
-	// called when loading has errors
-	function ( error ) {
+// 	},
+// 	// called when loading has errors
+// 	function ( error ) {
 
-		console.log( error );
+// 		console.log( error );
 
-	}
-);
+// 	}
+// );
 
 var link = document.createElement( 'a' );
 link.style.display = 'none';
@@ -647,99 +647,99 @@ function downloadJSON( blob, filename ) {
 
 }
 
-const urloader = new GLTFLoader();
-var ur_gltf;
-var urbase;
-var urj1;
-var urj2;
-var urj3;
-var urj4;
-var urj5;
-var urj6;
-// './static/gltf/UR3e_med.gltf'
-urloader.load(
-	// resource URL
-	'./static/gltf/ur3_small.gltf',
-	// called when the resource is loaded
-	function ( gltf ) {
+// const urloader = new GLTFLoader();
+// var ur_gltf;
+// var urbase;
+// var urj1;
+// var urj2;
+// var urj3;
+// var urj4;
+// var urj5;
+// var urj6;
+// // './static/gltf/UR3e_med.gltf'
+// urloader.load(
+// 	// resource URL
+// 	'./static/gltf/ur3_small.gltf',
+// 	// called when the resource is loaded
+// 	function ( gltf ) {
 
-		console.log(gltf.scene);
-		// gltf.animations; // Array<THREE.AnimationClip>
-		// gltf.scene; // THREE.Group
-		// gltf.scenes; // Array<THREE.Group>
-		// gltf.cameras; // Array<THREE.Camera>
-		// gltf.asset; // Object
-		let ur3 = gltf.scene;
-		let full_ur3 = ur3.clone().children[0];
-		ur_gltf = gltf.scene.clone(false);
-		full_ur3.children = [];
-		let children = ur3.clone().children[0].children;
-		console.log(children);
-		for (let i=0; i < children.length; i++){
-			switch (children[i].name){
-				case "occurrence_of_Base":
-					urbase = children[i];
-					break;
-				case "occurrence_of_Shoulder":
-					urj1 = children[i];
-					break;
-				case "occurrence_of_Elbow":
-					urj2 = children[i];
-					break;
-				case "occurrence_of_Wrist_1":
-					urj3 = children[i];
-					break;
-				case "occurrence_of_Wrist_2":
-					urj4 = children[i];
-					break;
-				case "occurrence_of_Wrist_3":
-					urj5 = children[i];
-					break;
-				case "occurrence_of_Tool_flange":
-					urj6 = children[i];
-					break;
-			}
-		}
-		// let	j1axis = new AxesHelper( .20 );
-		// let j2axis = new AxesHelper( .20 );
-		// let j3axis = new AxesHelper( .20 );
-		// let j4axis = new AxesHelper( .20 );
-		// let j5axis = new AxesHelper( .20 );
-		// let j6axis = new AxesHelper( .20 );
-		scene.add(ur_gltf);
-		ur_gltf.attach(full_ur3);
-		full_ur3.attach(urbase);
-		urbase.attach(urj1);
-		urj1.attach(urj2);
-		// urj1.add(j1axis);
-		urj2.attach(urj3);
-		// urj2.add(j2axis);
-		urj3.attach(urj4);
-		// urj3.add(j3axis);
-		urj4.attach(urj5);
-		// urj4.add(j4axis);
-		urj5.attach(urj6);
-		// urj5.add(j5axis);
+// 		console.log(gltf.scene);
+// 		// gltf.animations; // Array<THREE.AnimationClip>
+// 		// gltf.scene; // THREE.Group
+// 		// gltf.scenes; // Array<THREE.Group>
+// 		// gltf.cameras; // Array<THREE.Camera>
+// 		// gltf.asset; // Object
+// 		let ur3 = gltf.scene;
+// 		let full_ur3 = ur3.clone().children[0];
+// 		ur_gltf = gltf.scene.clone(false);
+// 		full_ur3.children = [];
+// 		let children = ur3.clone().children[0].children;
+// 		console.log(children);
+// 		for (let i=0; i < children.length; i++){
+// 			switch (children[i].name){
+// 				case "occurrence_of_Base":
+// 					urbase = children[i];
+// 					break;
+// 				case "occurrence_of_Shoulder":
+// 					urj1 = children[i];
+// 					break;
+// 				case "occurrence_of_Elbow":
+// 					urj2 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_1":
+// 					urj3 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_2":
+// 					urj4 = children[i];
+// 					break;
+// 				case "occurrence_of_Wrist_3":
+// 					urj5 = children[i];
+// 					break;
+// 				case "occurrence_of_Tool_flange":
+// 					urj6 = children[i];
+// 					break;
+// 			}
+// 		}
+// 		// let	j1axis = new AxesHelper( .20 );
+// 		// let j2axis = new AxesHelper( .20 );
+// 		// let j3axis = new AxesHelper( .20 );
+// 		// let j4axis = new AxesHelper( .20 );
+// 		// let j5axis = new AxesHelper( .20 );
+// 		// let j6axis = new AxesHelper( .20 );
+// 		scene.add(ur_gltf);
+// 		ur_gltf.attach(full_ur3);
+// 		full_ur3.attach(urbase);
+// 		urbase.attach(urj1);
+// 		urj1.attach(urj2);
+// 		// urj1.add(j1axis);
+// 		urj2.attach(urj3);
+// 		// urj2.add(j2axis);
+// 		urj3.attach(urj4);
+// 		// urj3.add(j3axis);
+// 		urj4.attach(urj5);
+// 		// urj4.add(j4axis);
+// 		urj5.attach(urj6);
+// 		// urj5.add(j5axis);
 
-		ur_gltf.scale.set(100, 100, 100);
-		ur_gltf.position.set(595,80,415);
-		ur_gltf.rotateY(Math.PI);
+// 		ur_gltf.scale.set(100, 100, 100);
+// 		ur_gltf.position.set(595,80,415);
+// 		ur_gltf.rotateY(Math.PI);
 
-		console.log(ur_gltf);
-	},
-	// called while loading is progressing
-	function ( xhr ) {
+// 		console.log(ur_gltf);
+// 	},
+// 	// called while loading is progressing
+// 	function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-	},
-	// called when loading has errors
-	function ( error ) {
+// 	},
+// 	// called when loading has errors
+// 	function ( error ) {
 
-		console.log( error );
+// 		console.log( error );
 
-	}
-);
+// 	}
+// );
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
