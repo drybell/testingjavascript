@@ -9,6 +9,10 @@ Python 3 and Pipenv
 
 2. `flask run` and navigate to `127.0.0.1:5000` on your favorite browser
 
+3. To stop the server, `Ctrl-C`
+
+4. To end the virtual environment, use `Ctrl-D`
+
 ### Routes 
 
 * `/`:  Home page, showcases the FANUC + draggable box IK solver
