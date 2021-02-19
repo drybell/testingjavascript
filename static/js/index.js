@@ -346,7 +346,7 @@ fanucloader.load(
 		fanuc_j5.add(j5axis);
 		
 		fanuc_gltf.scale.set(100, 100, 100);
-		fanuc_gltf.rotation.set(- Math.PI/2, 0, Math.PI/2);
+		fanuc_gltf.rotation.set(0, 0, 0);
 		fanuc_gltf.position.set(-220, 0, 100);
 		
 		console.log(fanuc_gltf);
