@@ -18,7 +18,7 @@ Python 3 and Pipenv
 * `/`:  Home page, showcases the FANUC + draggable box IK solver
 * `/1`: Testing page, testing different Onshape models and their mates
 * `/activity`: Activity page, where you can mess with the given environment and make your own animation! 
-* `example`: Holds a simple activity example of an animation loop
+* `/example`: Holds a simple activity example of an animation loop
 
 ### How to add your own static files
 
