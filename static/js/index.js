@@ -265,7 +265,7 @@ var base;
 var fanuc_anim;
 fanucloader.load(
 	// resource URL
-	'./static/gltf/Full FANUC.gltf',
+	'./static/gltf/FANUC.gltf',
 	// called when the resource is loaded
 	// FWIW, what I was guessing was your 
 	// question is doable by setting object.matrix to be the product 
