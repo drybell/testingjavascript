@@ -48,6 +48,9 @@ import { GLTFLoader } from './GLTFLoader.js';
 import { GLTFExporter } from './GLTFExporter.js';
 // import { ImageLoader } from './ImageLoader.js';
  
+/*
+    THREE.JS SCENE SETUP
+*/
 
 // Find the container id in the DOM and create a new scene
 const container = document.querySelector('#container');
@@ -140,6 +143,10 @@ dragControls.addEventListener('hoveroff', function () {
   controls.enabled = true;
 });
 
+/*
+  END SCENE SETUP 
+*/
+
 // GLTF LOADING 
 const loader = new GLTFLoader();
 
@@ -150,24 +157,23 @@ var base;
 var shoulder;
 var arm;
 var forearm;
-var wrist; 
 
 // loading function, takes in the resource URL, loading func, 
 loader.load(
   // resource URL
-  './static/gltf/PLTW.gltf',
+  './static/gltf/ESRAP.gltf',
   function ( gltf ) {
     console.log(gltf.scene);
-    let pltw = gltf.scene;
+    let body = gltf.scene;
 
     // clone the root of the assembly with no children
-    let pltw_gltf = gltf.scene.clone(false);
+    let body_gltf = gltf.scene.clone(false);
 
     // ORDERING OF THE PLTW HIERARCHY 
     // BASE --> SHOULDER --> ARM --> FOREARM --> WRIST 
 
     // Obtain the 5 children from the root 
-    let children = pltw.clone().children[0].children;
+    let children = body.clone().children[0].children;
 
     // since the loading is async, we have to iterate through the 
     // children array in order to obtain the correct ordering
@@ -178,22 +184,19 @@ loader.load(
 
     for (let i=0; i < children.length; i++){
       switch (children[i].name){
-        case "Base_<1>":
-          base = children[i];
-          break;
-        case "Shoulder_<1>":
+        case "occurrence_of_Part_1":
           shoulder = children[i];
           break;
-        case "Arm_<1>":
-          // fanuc_j2_original = children[i];
-          // fanuc_j2_original.rotateY(radians(90));
+        case "occurrence of Part 1_1":
           arm = children[i];
           break;
-        case "Forearm_<1>":
+        case "occurrence of Part 1_2":
+          // fanuc_j2_original = children[i];
+          // fanuc_j2_original.rotateY(radians(90));
           forearm = children[i];
           break;
-        case "Wrist_<1>":
-          wrist = children[i];
+        case "occurrence of Part 1_3":
+          base = children[i];
           break;
       }
     }
@@ -211,17 +214,41 @@ loader.load(
     // Using attach in order to maintain world
     // coordinates while reparenting
     console.log(children);
-    scene.attach(pltw_gltf);
-    pltw_gltf.attach(base);
+    scene.attach(body_gltf);
+    body_gltf.attach(base);
     base.attach(shoulder);
     shoulder.attach(arm);
-    arm.attach(forearm);
-    forearm.attach(wrist);
+    body_gltf.rotation.set(-Math.PI/2, 0, Math.PI);
+    body_gltf.scale.set(200,200,200);
+    body_gltf.position.set(0,0,0);
+    console.log(body_gltf);
+  },
+  // called while loading is progressing
+  function ( xhr ) {
 
-    pltw_gltf.scale.set(200,200,200);
-    pltw_gltf.position.set(0,0,0);
-    shoulder.rotation.set(0,-Math.PI, 0);
-    console.log(pltw_gltf);
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+  },
+  // called when loading has errors
+  function ( error ) {
+
+    console.log( error );
+
+  }
+);
+
+var human;
+
+loader.load(
+  // resource URL
+  './static/gltf/Human.gltf',
+  function ( gltf ) {
+    human = gltf.scene;
+
+    scene.add(human);
+    human.scale.set(100,100,100);
+    human.position.set(50,0,50);
+    human.rotation.set(-Math.PI/2, 0, 0);
   },
   // called while loading is progressing
   function ( xhr ) {
@@ -318,19 +345,20 @@ function CCDIKGLTF(model, anglelims, axes, target){
 
 // Define your axes & angles for each part of the assembly
 // that rotates. 
-var base_axis       = new Vector3(0,1,0);
+var base_axis       = new Vector3(0,0,1);
 var base_angles     = new Array(-180,180);
-var shoulder_axis   = new Vector3(0,1,0);
+var shoulder_axis   = new Vector3(0,0,1);
 var shoulder_angles = new Array(-180, 180);
 var arm_axis        = new Vector3(0,1,0);
 var arm_angles      = new Array(-180, 180);
-var forearm_axis    = new Vector3(1,0,0);
-var forearm_angles  = new Array(-180, 180);
+var forearm_axis        = new Vector3(1,0,0);
+var forearm_angles      = new Array(-180, 180);
 
-var pltw_axes = new Array(base_axis, shoulder_axis, arm_axis, forearm_axis);
-var pltw_angles = new Array(base_angles, shoulder_angles, arm_angles, forearm_angles);
 
-var pltw_robot = new Array();
+var axes = new Array(base_axis, shoulder_axis, arm_axis, forearm_axis);
+var angles = new Array(base_angles, shoulder_angles, arm_angles, forearm_angles);
+
+var robot = new Array();
 
 // set a check to indicate when the gltf loader
 // completes its process and we can assign
@@ -341,8 +369,8 @@ var check = false;
 // animate function
 function animate(){
     if (!check) {
-      if (base && shoulder && arm && forearm && wrist) {
-        pltw_robot = new Array(base, shoulder, arm, forearm);
+      if (base && shoulder && arm && forearm) {
+        robot = new Array(base, shoulder, arm, forearm);
         base.axis = base_axis;
         shoulder.axis = shoulder_axis;
         arm.axis      = arm_axis;
@@ -351,9 +379,8 @@ function animate(){
       }
     }
 
-    if (pltw_robot.length != 0) { 
-      // CCDIKGLTF(pltw_robot, pltw_angles, pltw_axes, target.position);
-      shoulder.rotateY(.1);
+    if (robot.length != 0) { 
+      CCDIKGLTF(robot, angles, axes, target.position);
     }
 
     requestAnimationFrame(animate);

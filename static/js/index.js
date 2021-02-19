@@ -344,7 +344,6 @@ fanucloader.load(
 		fanuc_j4.add(j4axis);
 		fanuc_j5.attach(fanuc_j6);
 		fanuc_j5.add(j5axis);
-
 		
 		fanuc_gltf.scale.set(100, 100, 100);
 		fanuc_gltf.rotation.set(- Math.PI/2, 0, Math.PI/2);
@@ -1452,17 +1451,17 @@ function animate() {
 			check = true;
 			console.log("TH");
 		}
-		if (urj1 && urj2 && urj3 && urj4 && urj5 && urj6){
-			ur_robot = new Array(urj1, urj2, urj3, urj4, urj5, urj6);
-			urj1.axis = urj1_axis;
-			urj2.axis = urj2_axis;
-			urj3.axis = urj3_axis;
-			urj4.axis = urj4_axis;
-			urj5.axis = urj5_axis;
-			urj6.axis = urj6_axis;
-			console.log("TH");
-			check = true;
-		}
+		// if (urj1 && urj2 && urj3 && urj4 && urj5 && urj6){
+		// 	ur_robot = new Array(urj1, urj2, urj3, urj4, urj5, urj6);
+		// 	urj1.axis = urj1_axis;
+		// 	urj2.axis = urj2_axis;
+		// 	urj3.axis = urj3_axis;
+		// 	urj4.axis = urj4_axis;
+		// 	urj5.axis = urj5_axis;
+		// 	urj6.axis = urj6_axis;
+		// 	console.log("TH");
+		// 	check = true;
+		// }
 	}
 
 	if (!export_flag && fanuc_gltf !== undefined) {
@@ -1480,57 +1479,57 @@ function animate() {
 		export_flag = true;
 	}
 
-	if (calc_circle && mir !== undefined && ur_gltf !== undefined && fanuc_gltf !== undefined) {
-		let mir_pos = new Vector3();
-		let tar_pos = new Vector3();
-		ur_gltf.getWorldPosition(mir_pos);
-		fanuc_gltf.getWorldPosition(tar_pos);
-		let mir_pos2 = new Vector2(mir_pos.x, mir_pos.z);
-		let tar_pos2 = new Vector2(tar_pos.x, tar_pos.z);
-		let temp = [mir_pos2, tar_pos2];
-		let c = calculateRemainingPoint(temp);
+	// if (calc_circle && mir !== undefined && ur_gltf !== undefined && fanuc_gltf !== undefined) {
+	// 	let mir_pos = new Vector3();
+	// 	let tar_pos = new Vector3();
+	// 	ur_gltf.getWorldPosition(mir_pos);
+	// 	fanuc_gltf.getWorldPosition(tar_pos);
+	// 	let mir_pos2 = new Vector2(mir_pos.x, mir_pos.z);
+	// 	let tar_pos2 = new Vector2(tar_pos.x, tar_pos.z);
+	// 	let temp = [mir_pos2, tar_pos2];
+	// 	let c = calculateRemainingPoint(temp);
 
-		// get angles to only keep arc
-		let mir_angle = new Vector2();
-		let tar_angle = new Vector2();
-		mir_angle.subVectors(mir_pos2, c);
-		tar_angle.subVectors(tar_pos2, c);
+	// 	// get angles to only keep arc
+	// 	let mir_angle = new Vector2();
+	// 	let tar_angle = new Vector2();
+	// 	mir_angle.subVectors(mir_pos2, c);
+	// 	tar_angle.subVectors(tar_pos2, c);
 
-		mir_angle = mir_angle.angle();
-		tar_angle = tar_angle.angle();
-		let circle = new EllipseCurve();
+	// 	mir_angle = mir_angle.angle();
+	// 	tar_angle = tar_angle.angle();
+	// 	let circle = new EllipseCurve();
 
-		if (Math.abs(tar_angle) < Math.abs(mir_angle)) {
-			circle = new EllipseCurve(c.x, c.y, c.r, c.r, tar_angle, mir_angle);
-		}
-		else { 
-			circle = new EllipseCurve(c.x, c.y, c.r, c.r, mir_angle, tar_angle);
-		}
-		let points = circle.getPoints( 1000 );
+	// 	if (Math.abs(tar_angle) < Math.abs(mir_angle)) {
+	// 		circle = new EllipseCurve(c.x, c.y, c.r, c.r, tar_angle, mir_angle);
+	// 	}
+	// 	else { 
+	// 		circle = new EllipseCurve(c.x, c.y, c.r, c.r, mir_angle, tar_angle);
+	// 	}
+	// 	let points = circle.getPoints( 1000 );
 
-		points.forEach((p) => {
-			new_points.push(new Vector3(p.x, 0, p.y));
-		})
+	// 	points.forEach((p) => {
+	// 		new_points.push(new Vector3(p.x, 0, p.y));
+	// 	})
 
-		let g = new BufferGeometry().setFromPoints( new_points );
+	// 	let g = new BufferGeometry().setFromPoints( new_points );
 
-		let m = new LineBasicMaterial( { color : 0xff0000 } );
+	// 	let m = new LineBasicMaterial( { color : 0xff0000 } );
 
-		// Create the final object to add to the scene
-		cccc = new Line( g, m );
-		scene.add(cccc);
-		// cccc.rotateX(Math.PI/2);
-		mir.add(target2);
-		calc_circle = false;
-		cccc.visible = false;
-		console.log(cccc);
-		mir_handler = new MIR(mir, new_points);
-	}
+	// 	// Create the final object to add to the scene
+	// 	cccc = new Line( g, m );
+	// 	scene.add(cccc);
+	// 	// cccc.rotateX(Math.PI/2);
+	// 	mir.add(target2);
+	// 	calc_circle = false;
+	// 	cccc.visible = false;
+	// 	console.log(cccc);
+	// 	mir_handler = new MIR(mir, new_points);
+	// }
 		
-	if (fanuc_robot.length != 0 && mir !== undefined){
-		mir.getWorldPosition(target_world_pos);
-		target_world_pos.add(new Vector3(0, 50, 0));
-		CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target_world_pos);
+	if (fanuc_robot.length != 0){
+		// mir.getWorldPosition(target_world_pos);
+		// target_world_pos.add(new Vector3(0, 50, 0));
+		CCDIKGLTF(fanuc_robot, fanuc_angles, fanuc_axes, target2.position);
 		// CCDIKGLTF(ur_robot, ur_angles, ur_axes, target2.position);
 		// for (let i=0; i <= fanuc_robot.length - 2; i++){
 		// 	await sleep(1000);
@@ -1538,9 +1537,9 @@ function animate() {
 		// }
 		// if (!check_coords) { console.log(ur_robot); console.log(fanuc_robot); check_coords = true };
 	}
-	if (mir_handler !== null) { 
-		mir_handler.moveMIR();
-	}
+	// if (mir_handler !== null) { 
+	// 	mir_handler.moveMIR();
+	// }
     requestAnimationFrame(animate);
     controls.update();
  
